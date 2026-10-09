@@ -2,24 +2,19 @@
 
 **STAGE 1 ONLY: IO-VNBD Data Loading, Validation & S/V Synchronization**
 
-This repository implements *only* Stage 1 of the future NAV-SHIELD pipeline:
+This repository implements Stage 1 of the NAV-SHIELD pipeline:
 
 ```
 IO-VNBD Dataset → Data Loading → Data Validation → S/V Synchronization
-   → (Stage 2+: Preprocessing & Calibration → Feature Engineering → LSTM
-      → GNSS-Denied Dead Reckoning → Drift Calculation → AI Drift
-      Correction → Evaluation → Model Export)
 ```
 
-No ML model, dead-reckoning logic, drift correction, GNSS-outage
-simulation, sensor fusion, map matching, or mobile/ONNX/TFLite export is
-implemented here. Those belong to later stages.
+It prepares validated, time-aligned sensor and vehicle data for downstream
+NAV-SHIELD components.
 
 ## Dataset
 
-This project uses **only** the official **IO-VNBD Synchronised V and S
-Dataset**. The dataset is **not bundled** with this repository — you must
-supply the path to your own local, extracted copy at runtime.
+This project uses the official **IO-VNBD Synchronised V and S Dataset**.
+Provide the path to an extracted dataset copy when running the pipeline.
 
 Do not use the Unsynchronised V+S dataset, KITTI, Oxford RobotCar, EuRoC,
 or any other dataset with this code.
@@ -169,8 +164,5 @@ or substituted for, the real IO-VNBD dataset.
 
 ## Stage boundary
 
-This module stops after producing the aligned dataset and Stage 1
-reports/plot. Preprocessing & calibration, feature engineering, the LSTM
-model, dead reckoning, drift calculation, AI drift correction, evaluation,
-and model export are all out of scope here and will be implemented in
-later, separate stages.
+Stage 1 produces the aligned dataset and its reports and synchronization
+diagnostic plot.
