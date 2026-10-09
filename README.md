@@ -21,12 +21,12 @@ NAV-SHIELD processes these sources through separate components: Android collects
 | Component | Location | Main responsibilities |
 | --- | --- | --- |
 | Android navigation app | [`app/`](app/) | Android location and sensor collection, road graph storage/matching, pipeline orchestration, navigation-state display |
-| Member 1 — map intelligence | [`NAV_SHIELD_Member1_Module/nav_shield_member1/`](NAV_SHIELD_Member1_Module/nav_shield_member1/) | Road graph construction, spatial indexing, candidate scoring, learned re-ranking, multi-candidate map-match results |
-| Member 3 — IMU prototype | [`Member_3/Nav_Shield_1/`](Member_3/Nav_Shield_1/) | Accelerometer/gyroscope filtering and calibration, orientation, phone-to-vehicle alignment, dead reckoning, motion classification, confidence diagnostics |
-| Member 4 — Trust Brain | [`app/src/main/java/com/navshield/map/engine/`](app/src/main/java/com/navshield/map/engine/) | UKF-based state estimation, GNSS mode handling, multiple road hypotheses, sensor/map/AI weighting |
-| Member 5 — data and AI pipeline | [`src/`](src/), [`main.py`](main.py), [`stage3_features.py`](stage3_features.py), [`stage4.py`](stage4.py)–[`stage8.py`](stage8.py) | S/V data loading and synchronization, data-quality checks, feature engineering, dataset preparation, anomaly detection, error-label generation, temporal model training |
+| Map intelligence | [`map_intelligence/map_matching/`](map_intelligence/map_matching/) | Road graph construction, spatial indexing, candidate scoring, learned re-ranking, multi-candidate map-match results |
+| IMU navigation prototype | [`imu_navigation/android_app/`](imu_navigation/android_app/) | Accelerometer/gyroscope filtering and calibration, orientation, phone-to-vehicle alignment, dead reckoning, motion classification, confidence diagnostics |
+| Trust Brain | [`app/src/main/java/com/navshield/map/engine/`](app/src/main/java/com/navshield/map/engine/) | UKF-based state estimation, GNSS mode handling, multiple road hypotheses, sensor/map/AI weighting |
+| Data and AI pipeline | [`src/`](src/), [`main.py`](main.py), [`stage3_features.py`](stage3_features.py), [`stage4.py`](stage4.py)–[`stage8.py`](stage8.py) | S/V data loading and synchronization, data-quality checks, feature engineering, dataset preparation, anomaly detection, error-label generation, temporal model training |
 
-Member 3 is maintained as a separate Android prototype. The main app's routing integration is represented by a Kotlin interface, allowing a routing implementation to be connected through that boundary.
+The IMU prototype is maintained as a separate Android project. The main app's routing integration is represented by a Kotlin interface, allowing a routing implementation to be connected through that boundary.
 
 ## Architecture
 
@@ -141,12 +141,12 @@ The following scripts are intended to be run in sequence after their input data 
 
 These scripts use the project’s `data/` and `results/` directory layout. Review path configuration in the relevant script before running on a different machine or dataset. Stage 5 performs unsupervised detection; its anomaly scores should not be interpreted as labeled drift classifications.
 
-## Member 1 map-matching module
+## Map intelligence module
 
 The Python map-matching module can be run independently from its directory:
 
 ```powershell
-cd NAV_SHIELD_Member1_Module\nav_shield_member1
+cd map_intelligence\map_matching
 pip install -r requirements.txt
 python sample_data\generate_sample_data.py
 python map_matching_service.py
@@ -157,9 +157,9 @@ This module builds and indexes a road graph, scores candidate roads using locati
 
 The Android application separately includes a local SQLite road repository and a basic map-matching engine used by the app pipeline.
 
-## Member 3 IMU prototype
+## IMU navigation prototype
 
-The standalone Android project is under `Member_3/Nav_Shield_1/`. Open that directory as a Gradle project in Android Studio to run the prototype. Its screens expose sensor filtering/calibration, orientation and alignment diagnostics, motion classification, dead-reckoning outputs, and CSV logging. GNSS heading is accepted through the `setGnssHeading(...)` integration interface.
+The standalone Android project is under `imu_navigation/android_app/`. Open that directory as a Gradle project in Android Studio to run the prototype. Its screens expose sensor filtering/calibration, orientation and alignment diagnostics, motion classification, dead-reckoning outputs, and CSV logging. GNSS heading is accepted through the `setGnssHeading(...)` integration interface.
 
 ## Project structure
 
@@ -167,10 +167,10 @@ The standalone Android project is under `Member_3/Nav_Shield_1/`. Open that dire
 .
 ├── app/                                  # Main Android navigation app
 │   └── src/main/java/com/navshield/map/  # Contracts, sensors, map, UKF, orchestration
-├── NAV_SHIELD_Member1_Module/
-│   └── nav_shield_member1/                # Python road graph and map-matching module
-├── Member_3/
-│   └── Nav_Shield_1/                      # Standalone Android IMU prototype
+├── map_intelligence/
+│   └── map_matching/                       # Python road graph and map-matching module
+├── imu_navigation/
+│   └── android_app/                       # Standalone Android IMU prototype
 ├── src/                                   # Member 5 CSV loading, validation, synchronization
 ├── tests/                                 # Python Stage 1 and feature/audit tests
 ├── python_prototype/                      # Member 4 state-estimation simulator
@@ -208,20 +208,20 @@ Run the Android unit tests:
 .\gradlew.bat test
 ```
 
-Run the Member 1 tests from its module directory with the command shown above. The repository also contains Kotlin tests for map matching, contracts, sensor processing, and pipeline behavior. Python Stage 1 tests use synthetic data; they do not require the IO-VNBD dataset.
+Run the map intelligence tests from its module directory with the command shown above. The repository also contains Kotlin tests for map matching, contracts, sensor processing, and pipeline behavior. Python Stage 1 tests use synthetic data; they do not require the IO-VNBD dataset.
 
 ## Technical decisions and limitations
 
 - S/V records are synchronized by elapsed time rather than row number, and unmatched samples remain identifiable in the output.
 - Feature engineering uses trailing windows and sequence-aware preprocessing to avoid using future rows and to keep sequence boundaries intact.
 - The anomaly detector is unsupervised because the recorded pipeline does not use verified row-level drift/no-drift labels for Stage 5 classification.
-- The Member 1 sample network is synthetic; OSM ingestion and the production PyTorch Geometric path require their respective external tools/dependencies.
+- The map intelligence sample network is synthetic; OSM ingestion and the production PyTorch Geometric path require their respective external tools/dependencies.
 - Physical navigation accuracy and model performance depend on the input recordings and deployment environment; evaluate with representative real routes before relying on estimates for navigation.
 
 ## Further documentation
 
-- [Member 1 module README](NAV_SHIELD_Member1_Module/nav_shield_member1/README.md)
-- [Member 3 module README](Member_3/README.md)
+- [Map intelligence module README](map_intelligence/map_matching/README.md)
+- [IMU navigation README](imu_navigation/README.md)
 - [Member 4 integration notes](MEMBER4_README.md)
 - [Stage 3 feature engineering](STAGE3_README.md)
 - [Stage 3.5 feature audit](STAGE3_5_README.md)

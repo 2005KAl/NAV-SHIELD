@@ -1,8 +1,8 @@
-# Member 1 Actual Output Contract
+# Map-Matching Output Contract
 
-Based on `contract.py` and `map_matching_service.py` in `D:/NAV_SHIELD_Member1_Module/nav_shield_member1/`.
+Based on `contract.py` and `map_matching_service.py` in `map_intelligence/map_matching/`.
 
-## 1. MapMatchQuery (Input to Member 1)
+## 1. MapMatchQuery (Input)
 | Field | Type | Unit | Description |
 |---|---|---|---|
 | `latitude` | `float` | Decimal Degrees | Current GPS latitude |
@@ -10,7 +10,7 @@ Based on `contract.py` and `map_matching_service.py` in `D:/NAV_SHIELD_Member1_M
 | `heading` | `float` | Degrees | Current vehicle heading |
 | `speed` | `float` | m/s | Current vehicle speed |
 
-## 2. MapMatchResult (Output from Member 1)
+## 2. MapMatchResult (Output)
 | Field | Type | Unit | Nullable? | Description |
 |---|---|---|---|---|
 | `matched_latitude` | `float` | Decimal Degrees | No | Snapped latitude on the road segment |

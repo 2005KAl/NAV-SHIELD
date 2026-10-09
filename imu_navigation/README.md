@@ -1,14 +1,12 @@
-# SIH_member3
-This module provides calibrated IMU measurements, phone-to-vehicle alignment, orientation, velocity, displacement, dead-reckoned position, motion state and IMU confidence.  GNSS heading is received from Member 2 through setGnssHeading().
-# NAV-SHIELD — Member 3
+# NAV-SHIELD — IMU Navigation
 
 ## IMU Engine + Calibration + Dead Reckoning + Motion Intelligence
 
-This repository contains the current **Member 3** work for the NAV-SHIELD Smart India Hackathon project.
+This repository contains the Android/Kotlin inertial-navigation prototype for NAV-SHIELD.
 
-Member 3 is responsible for the **inertial navigation core**: reading smartphone IMU sensors, filtering and calibrating the data, estimating orientation, preparing phone-to-vehicle alignment, estimating motion, and building the foundation for GNSS-denied dead reckoning.
+The module implements the **inertial navigation core**: reading smartphone IMU sensors, filtering and calibrating the data, estimating orientation, preparing phone-to-vehicle alignment, estimating motion, and building the foundation for GNSS-denied dead reckoning.
 
-> **Current status:** The implementation is currently developed as an Android/Kotlin prototype. GNSS heading integration with Member 2 is prepared through an input interface, but Member 2's live Android GNSS implementation has not yet been connected.
+> **Current status:** GNSS heading is accepted through an input interface. The main application's Android GNSS source is maintained separately.
 
 ---
 
@@ -80,7 +78,7 @@ A phone-to-vehicle rotation matrix is then constructed.
 
 ### GNSS Heading Interface
 
-Member 2 is expected to provide the real GNSS heading.
+The Android GNSS source can provide the real GNSS heading.
 
 The current interface is:
 
@@ -99,7 +97,7 @@ The heading is interpreted in degrees.
 When GNSS heading is not available, the application displays:
 
 ```text
-WAITING FOR MEMBER 2
+WAITING FOR GNSS heading
 ```
 
 No fake GNSS heading is hard-coded.
@@ -203,7 +201,7 @@ The implementation also exposes diagnostic information such as sensor rate and l
 
 ## 8. Output / Integration Interfaces
 
-The Member 3 implementation contains an output structure for the inertial-navigation results.
+The implementation contains an output structure for the inertial-navigation results.
 
 The intended output includes values such as:
 
@@ -266,9 +264,9 @@ The code also provides functionality to obtain the CSV log file path and clear t
 
 ---
 
-## 11. Current Integration With Member 2
+## 11. GNSS Integration
 
-Member 2 has shared a GNSS engine prototype that produces information including:
+The GNSS provider produces information including:
 
 ```text
 gnss_latitude
@@ -283,7 +281,7 @@ gnss_recovery
 gnss_mode
 ```
 
-For the current Member 3 implementation, the most important input from Member 2 is:
+For this IMU implementation, the most important external GNSS input is:
 
 ```text
 gnss_heading
@@ -297,11 +295,11 @@ setGnssHeading(heading: Float)
 
 ### Current situation
 
-Member 2's shared GNSS implementation is currently a Python prototype.
+The GNSS module also has a Python prototype.
 
-Therefore, the two modules are **not yet directly connected as live Android components**.
+The Python prototype is not directly connected as a live Android component.
 
-No changes to the Member 3 IMU pipeline are required just because Member 2's Python prototype has been shared.
+The IMU pipeline receives GNSS heading through its input interface.
 
 The Android/Kotlin GNSS provider will be connected later through the defined interface.
 
@@ -337,10 +335,10 @@ The Android/Kotlin GNSS provider will be connected later through the defined int
 
 ### Not Yet Integrated / Fully Validated
 
-- [ ] Live Android connection to Member 2's GNSS engine
-- [ ] Full Member 2 → Member 3 live data flow
-- [ ] Member 3 → Member 4 UKF integration
-- [ ] Full road-grade integration from Member 1
+- [ ] End-to-end live GNSS heading integration
+- [ ] Full GNSS-to-IMU live data flow
+- [ ] IMU-to-UKF integration
+- [ ] Full road-grade integration
 - [ ] Final Phase-I confidence tuning
 - [ ] Full physical validation on recorded/live driving data
 - [ ] Complete multi-member system validation
@@ -399,7 +397,7 @@ Place the phone at an offset angle relative to the vehicle axis and verify that 
 
 ## 14. Project Responsibility
 
-Member 3 owns:
+This module provides:
 
 ```text
 IMU Sensors
@@ -419,13 +417,13 @@ Motion Classification
 IMU Confidence
 ```
 
-Member 3 does **not** own:
+Related components maintained elsewhere:
 
 ```text
-GNSS Engine       → Member 2
-UKF / Sensor Fusion → Member 4
-Road Slope        → Member 1
-LSTM / AI module  → Member 5
+GNSS Engine         → Android sensor source
+UKF / Sensor Fusion → Trust Brain
+Road Slope          → Map intelligence
+LSTM / AI module    → Data and AI pipeline
 ```
 
 The interfaces between these modules should remain clearly separated.
@@ -434,11 +432,11 @@ The interfaces between these modules should remain clearly separated.
 
 ## 15. Important Design Principle
 
-The Member 3 module should remain independently testable.
+The IMU module should remain independently testable.
 
 GNSS heading is therefore treated as an **external input** rather than being hard-coded into the IMU engine.
 
-This allows the current IMU work to be developed and tested independently while keeping the code ready for integration with Member 2's Android GNSS implementation.
+This allows the IMU work to be developed and tested independently while keeping the code ready for integration with the Android GNSS source.
 
 ---
 
@@ -461,4 +459,3 @@ The main implementation is currently contained in:
 ```text
 app/src/main/java/com/example/nav_shield_1/MainActivity.kt
 ```
-

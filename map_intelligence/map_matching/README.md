@@ -1,4 +1,4 @@
-# NAV-SHIELD · Member 1 — Offline Map + Road Graph + GNN Map Matching
+# NAV-SHIELD — Offline Map, Road Graph, and Map Matching
 
 Implementation of the Geographical Intelligence Layer module, covering
 Phases A–G from the spec. This README is honest about what's fully tested

@@ -15,7 +15,7 @@ The system is built on a modular, high-performance navigation pipeline:
 
 ## 3. Directory Structure
 - `app/src/main/java/com/navshield/map/engine/`: Core UKF and Fusion logic.
-- `app/src/main/java/com/navshield/map/contract/`: Data Transfer Objects (DTOs) for Member 1 and Member 2.
+- `app/src/main/java/com/navshield/map/contract/`: Data Transfer Objects (DTOs) for map-matching and sensor input/output contracts.
 - `app/src/main/java/com/navshield/map/engine/math/`: custom Matrix and Geographic projection libraries.
 - `python_prototype/`: Python-based simulator for Phase J verification scenarios.
 - `docs/`: Historical audit and phase implementation reports.
